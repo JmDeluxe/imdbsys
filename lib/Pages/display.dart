@@ -2,10 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:registration/Pages/Register.dart';
+import 'package:registration/Pages/login.dart';
 import 'package:registration/Pages/update.dart';
 import 'package:registration/dbHelper/MongoDBModel.dart';
 import 'package:registration/dbHelper/mongodb.dart';
 import 'package:registration/dbHelper/MongoDBModel.dart';
+
+import '../timer/deleteChecker.dart';
 
 class display extends StatefulWidget {
   const display({Key? key}) : super(key: key);
@@ -13,9 +16,6 @@ class display extends StatefulWidget {
   @override
   State<display> createState() => _displayState();
 }
-
-
-
 
 class _displayState extends State<display> {
   String? passChecker;
@@ -37,141 +37,147 @@ class _displayState extends State<display> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-          child: FutureBuilder(
-              future: MongoDB.getData(),
-              builder: (context, AsyncSnapshot snapshot){
-              if(snapshot.connectionState == ConnectionState.waiting){
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }else {
-                if(snapshot.hasData){
-                  return Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(left: 20, right: 20),
-                        child: TextField(
-                          controller: temp,
-                          decoration: InputDecoration(
-                            label: Text('Search'),suffixIcon: IconButton(
-                            onPressed: () async {
-                              try {
-                                var yes = await MongoDB.getQuery(temp.text);
-
-                                String? first;
-                                String? last;
-                                String? email;
-
-                                for(var name in yes) {
-                                  first = name['firstName'];
-                                  last = name['lastName'];
-                                  email = name['email'];
-                                }
-
-                                if(email == temp.text){
-                                  showModalBottomSheet(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20.0),
-                                      ),
-                                      context: context, builder: (BuildContext context){
-                                    return SizedBox(
-                                        height: 400,
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(left: 20, right: 20),
-                                          child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: <Widget>[
-                                                Text('Information', style: TextStyle( fontSize: 20),),
-                                                SizedBox(height: 20,),
-                                                TextFormField(
-                                                  enabled: false,
-                                                  decoration: InputDecoration(
-                                                      labelText: first,
-                                                      labelStyle: TextStyle(color: Colors.grey[700]),
-                                                      contentPadding: EdgeInsets.only(left: 50, top: 35),
-                                                      prefixIcon: Icon(Icons.perm_identity_sharp, color: Colors.deepOrangeAccent,),
-                                                      border: OutlineInputBorder(
-                                                        borderSide: BorderSide(color: Colors.orange,),
-                                                        borderRadius: BorderRadius.circular(25.0),
-                                                      )
-                                                  ),
-                                                ),
-                                                TextFormField(
-                                                  enabled: false,
-                                                  decoration: InputDecoration(
-                                                      labelText: last,
-                                                      labelStyle: TextStyle(color: Colors.grey[700]),
-                                                      contentPadding: EdgeInsets.only(left: 50, top: 35),
-                                                      prefixIcon: Icon(Icons.perm_identity_sharp, color: Colors.deepOrangeAccent,),
-                                                      border: OutlineInputBorder(
-                                                        borderSide: BorderSide(color: Colors.orange,),
-                                                        borderRadius: BorderRadius.circular(25.0),
-                                                      )
-                                                  ),
-                                                ),
-                                                TextFormField(
-                                                  enabled: false,
-                                                  decoration: InputDecoration(
-                                                      labelText: email,
-                                                      labelStyle: TextStyle(color: Colors.grey[700]),
-                                                      contentPadding: EdgeInsets.only(left: 50, top: 35),
-                                                      prefixIcon: Icon(Icons.perm_identity_sharp, color: Colors.deepOrangeAccent,),
-                                                      border: OutlineInputBorder(
-                                                        borderSide: BorderSide(color: Colors.orange,),
-                                                        borderRadius: BorderRadius.circular(25.0),
-                                                      )
-                                                  ),
-                                                ),
-                                                TextFormField(
-                                                  enabled: false,
-                                                  decoration: InputDecoration(
-                                                      labelText: '***',
-                                                      labelStyle: TextStyle(color: Colors.grey[700]),
-                                                      contentPadding: EdgeInsets.only(left: 50, top: 35),
-                                                      prefixIcon: Icon(Icons.perm_identity_sharp, color: Colors.deepOrangeAccent,),
-                                                      border: OutlineInputBorder(
-                                                        borderSide: BorderSide(color: Colors.orange,),
-                                                        borderRadius: BorderRadius.circular(25.0),
-                                                      )
-                                                  ),
-                                                ),
-                                              ]
-                                          ),
-                                        )
-                                    );
-                                  });
-                                }else{
-
-                                }
-
-                              }catch (e){}
-                            },
-                            icon: Icon(Icons.search),
-                          )
-                          )
-                        ),
-                      ),
-                   Expanded(
-                     child: ListView.builder(
-                  itemCount: snapshot.data.length,
-                        itemBuilder: (context, index){
-                          MongoDbModel data = MongoDbModel.fromJson(snapshot.data[index]);
-                          return displayCard(data);
-                        }),
-                   )
-                    ],
+    return WillPopScope(
+      onWillPop: () async {
+        await Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return login();
+        }));
+        return true;
+      },
+      child: Scaffold(
+        body: SafeArea(
+            child: FutureBuilder(
+                future: MongoDB.getData(),
+                builder: (context, AsyncSnapshot snapshot){
+                if(snapshot.connectionState == ConnectionState.waiting){
+                  return Center(
+                    child: CircularProgressIndicator(),
                   );
                 }else {
-                  return Center(
-                    child: Text('No data!')
-                  );
-                }
-              }
-            },),
-      ),
+                  if(snapshot.hasData){
+                    return Column(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20, right: 20),
+                          child: TextField(
+                            controller: temp,
+                            decoration: InputDecoration(
+                              label: Text('Search'),suffixIcon: IconButton(
+                              onPressed: () async {
+                                try {
+                                  var yes = await MongoDB.getQuery(temp.text);
 
+                                  String? first;
+                                  String? last;
+                                  String? email;
+
+                                  for(var name in yes) {
+                                    first = name['firstName'];
+                                    last = name['lastName'];
+                                    email = name['email'];
+                                  }
+
+                                  if(email == temp.text){
+                                    showModalBottomSheet(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(20.0),
+                                        ),
+                                        context: context, builder: (BuildContext context){
+                                      return SizedBox(
+                                          height: 400,
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(left: 20, right: 20),
+                                            child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: <Widget>[
+                                                  Text('Information', style: TextStyle( fontSize: 20),),
+                                                  SizedBox(height: 20,),
+                                                  TextFormField(
+                                                    enabled: false,
+                                                    decoration: InputDecoration(
+                                                        labelText: first,
+                                                        labelStyle: TextStyle(color: Colors.grey[700]),
+                                                        contentPadding: EdgeInsets.only(left: 50, top: 35),
+                                                        prefixIcon: Icon(Icons.perm_identity_sharp, color: Colors.deepOrangeAccent,),
+                                                        border: OutlineInputBorder(
+                                                          borderSide: BorderSide(color: Colors.orange,),
+                                                          borderRadius: BorderRadius.circular(25.0),
+                                                        )
+                                                    ),
+                                                  ),
+                                                  TextFormField(
+                                                    enabled: false,
+                                                    decoration: InputDecoration(
+                                                        labelText: last,
+                                                        labelStyle: TextStyle(color: Colors.grey[700]),
+                                                        contentPadding: EdgeInsets.only(left: 50, top: 35),
+                                                        prefixIcon: Icon(Icons.perm_identity_sharp, color: Colors.deepOrangeAccent,),
+                                                        border: OutlineInputBorder(
+                                                          borderSide: BorderSide(color: Colors.orange,),
+                                                          borderRadius: BorderRadius.circular(25.0),
+                                                        )
+                                                    ),
+                                                  ),
+                                                  TextFormField(
+                                                    enabled: false,
+                                                    decoration: InputDecoration(
+                                                        labelText: email,
+                                                        labelStyle: TextStyle(color: Colors.grey[700]),
+                                                        contentPadding: EdgeInsets.only(left: 50, top: 35),
+                                                        prefixIcon: Icon(Icons.perm_identity_sharp, color: Colors.deepOrangeAccent,),
+                                                        border: OutlineInputBorder(
+                                                          borderSide: BorderSide(color: Colors.orange,),
+                                                          borderRadius: BorderRadius.circular(25.0),
+                                                        )
+                                                    ),
+                                                  ),
+                                                  TextFormField(
+                                                    enabled: false,
+                                                    decoration: InputDecoration(
+                                                        labelText: '***',
+                                                        labelStyle: TextStyle(color: Colors.grey[700]),
+                                                        contentPadding: EdgeInsets.only(left: 50, top: 35),
+                                                        prefixIcon: Icon(Icons.perm_identity_sharp, color: Colors.deepOrangeAccent,),
+                                                        border: OutlineInputBorder(
+                                                          borderSide: BorderSide(color: Colors.orange,),
+                                                          borderRadius: BorderRadius.circular(25.0),
+                                                        )
+                                                    ),
+                                                  ),
+                                                ]
+                                            ),
+                                          )
+                                      );
+                                    });
+                                  }else{
+                                  }
+                                }catch (e){}
+                              },
+                              icon: Icon(Icons.search),
+                            )
+                            )
+                          ),
+                        ),
+                     Expanded(
+                       child: ListView.builder(
+                    itemCount: snapshot.data.length,
+                          itemBuilder: (context, index){
+                            MongoDbModel data = MongoDbModel.fromJson(snapshot.data[index]);
+                            return displayCard(data);
+                          }),
+                     )
+                      ],
+                    );
+                  }else {
+                    return Center(
+                      child: Text('No data!')
+                    );
+                  }
+                }
+              },),
+        ),
+
+      ),
     );
   }
 
@@ -219,7 +225,6 @@ class _displayState extends State<display> {
                 borderSide: BorderSide(color: Colors.black, width: 3),
                 borderRadius: BorderRadius.circular(25.0),
               ),
-
             ),
           ),
           SizedBox(height: 10,),
@@ -266,7 +271,6 @@ class _displayState extends State<display> {
                       ),
                       context: context, builder: (BuildContext context){
                     return SizedBox(
-
                       height: 400,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -287,14 +291,16 @@ class _displayState extends State<display> {
                               ),
                               child: TextButton(onPressed: () async {
                                 await MongoDB.delete(data);
-                                Navigator.pop(context);
-                                setState(() {});
+
+                                await Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                  return deleteChecker();
+                                }));
+                                // setState(() {});
                               },
                                 child: Text('Confirm',style: TextStyle(color: Colors.white, fontSize: 17),),
                                 style: TextButton.styleFrom(padding: EdgeInsets.all(16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))),
                               ),
                             ),
-
                           ]
                     )
                     );

@@ -17,7 +17,7 @@ class MongoDB{
   }
 
   static Future<List<Map<String,dynamic>>> getData() async {
-    final listData = await userCollection.find().toList();
+    final listData = await userCollection.find().toList(); 
     return listData;
   }
 
@@ -61,7 +61,6 @@ class MongoDB{
       return false;
     }
   }
-
 
 
   static Future<String> insert(MongoDbModel data) async{

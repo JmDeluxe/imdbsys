@@ -35,11 +35,10 @@ class MongoDbModel {
   );
 
   Map<String, dynamic> toJson() => {
-    "firstName": id,
+    "_id": id,
     "firstName": firstName,
     "lastName": lastName,
     "password": password,
     "email": email,
-
   };
 }

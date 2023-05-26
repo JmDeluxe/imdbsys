@@ -20,6 +20,7 @@ class _grantedState extends State<granted> {
         Duration(milliseconds: 3000), ()=> Navigator.push(context, MaterialPageRoute(builder: (context) {return display();}))
     );
   }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
