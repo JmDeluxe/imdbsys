@@ -26,6 +26,7 @@ class MongoDB{
     return listData;
   }
 
+
   static Future<void> update(MongoDbModel data) async {
 
     await userCollection.update(where.eq('_id', data.id),
@@ -76,7 +77,7 @@ class MongoDB{
       return e.toString();
     }
   }
-
+    //{id: 1231, firstName: "234234"}
   static delete(MongoDbModel user) async {
     await userCollection.remove(where.id(user.id));
   }

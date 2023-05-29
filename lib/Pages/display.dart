@@ -249,6 +249,7 @@ class _displayState extends State<display> {
             ),
           ),
           SizedBox(height: 10,),
+          // Edit & Delete Jose Marlito Planteras
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -295,7 +296,7 @@ class _displayState extends State<display> {
                                 await Navigator.push(context, MaterialPageRoute(builder: (context) {
                                   return deleteChecker();
                                 }));
-                                // setState(() {});
+                                setState(() {});
                               },
                                 child: Text('Confirm',style: TextStyle(color: Colors.white, fontSize: 17),),
                                 style: TextButton.styleFrom(padding: EdgeInsets.all(16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))),

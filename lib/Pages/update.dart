@@ -29,7 +29,6 @@ class _updateState extends State<update> {
     MongoDbModel data = ModalRoute.of(context)!.settings.arguments as MongoDbModel;
 
     if(data != null) {
-
       id.text = data.id.toString();
       firstName.text = data.firstName;
       lastName.text = data.lastName;
@@ -48,7 +47,7 @@ class _updateState extends State<update> {
             child: Column(
             children: <Widget>[
               SizedBox(height: 70,),
-              Text('REGISTER', style: TextStyle(letterSpacing: 2, fontSize: 30),),
+              Text('UPDATE', style: TextStyle(letterSpacing: 2, fontSize: 30),),
               SizedBox(height: 10,),
               TextFormField(
                 enabled: false,
@@ -180,6 +179,7 @@ class _updateState extends State<update> {
       ),
     );
   }
+
   Future<void> _updateData({required var id, required String firstName, required String lastName, required String email, required String password}) async {
     final updateData = MongoDbModel( id: id, firstName: firstName, lastName: lastName, email: email, password: password);
     await MongoDB.update(updateData);
@@ -187,4 +187,5 @@ class _updateState extends State<update> {
     //.whenComplete(() => Navigator.pop(context))
 
   }
+  
 }
